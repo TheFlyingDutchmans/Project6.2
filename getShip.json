@@ -20,7 +20,7 @@
         "apiKey": {
           "description": "API key of the user",
           "type": "string",
-          "maxLength": 20
+          "maxLength": 50
         }
       },
       "required": [

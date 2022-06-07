@@ -14,8 +14,8 @@
         },
         "userID": {
           "description": "User ID of the user",
-          "type": "number",
-          "maxLength": 20
+          "type": "integer",
+          "maxLength": 50
         }
       },
       "required": [
