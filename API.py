@@ -108,7 +108,7 @@ def newShip():
         request_data = request_data.popitem()[1]
 
     if not validate_json(request_data, 'newShip'):
-        return jsonify({"error": "Invalid JSON"}), 400
+        return jsonify({"error": "Invalid Request"}), 400
 
     apiKey = sanitizeInput(str(request_data['user']['apiKey']))
     if checkApiLimit(apiKey) is not None: #Checks the API limit for the user
@@ -154,7 +154,7 @@ def getShip():
         request_data = request_data.popitem()[1]
 
     if not validate_json(request_data, 'getShip'):
-        return jsonify({"error": "Invalid JSON"}), 400
+        return jsonify({"error": "Invalid Request"}), 400
 
     apiKey = sanitizeInput(str(request_data['user']['apiKey']))
     if checkApiLimit(apiKey) is not None:
@@ -186,7 +186,7 @@ def getApiLimit():
         request_data = request_data.popitem()[1]
 
     if not validate_json(request_data, 'getApiLimit'):
-        return jsonify({"error": "Invalid JSON"}), 400
+        return jsonify({"error": "Invalid Request"}), 400
 
     apiKey = sanitizeInput(str(request_data['user']['apiKey']))
     if checkApiLimit(apiKey) is not None:
@@ -209,7 +209,7 @@ def encodeAIS():
         request_data = request_data.popitem()[1]
 
     if not validate_json(request_data, 'encodeAIS'):
-        return jsonify({"error": "Invalid JSON"}), 400
+        return jsonify({"error": "Invalid Request"}), 400
 
     apiKey = sanitizeInput(str(request_data['user']['apiKey']))
     if checkApiLimit(apiKey) is not None:
@@ -245,7 +245,7 @@ def decodeAIS():
         request_data = request_data.popitem()[1]
 
     if not validate_json(request_data, 'decodeAIS'):
-        return jsonify({"error": "Invalid JSON"}), 400
+        return jsonify({"error": "Invalid Request"}), 400
 
     apiKey = sanitizeInput(str(request_data['user']['apiKey']))
     if checkApiLimit(apiKey) is not None:
@@ -302,7 +302,7 @@ def getSpoofData():
         request_data = request_data.popitem()[1]
 
     if not validate_json(request_data, 'getSpoofData'):
-        return jsonify({"error": "Invalid JSON"}), 400
+        return jsonify({"error": "Invalid Request"}), 400
 
     apiKey = sanitizeInput(str(request_data['user']['apiKey']))
     if checkApiLimit(apiKey) is not None:
@@ -315,7 +315,7 @@ def getSpoofData():
         sqlcursor.execute("SELECT * FROM requests WHERE requestID = '" + spoofID + "';")
         spoofData = sqlcursor.fetchone()
         if spoofData is None:
-            return jsonify({"error": "Spoof ID not found"}), 400
+            return jsonify({"error": "Spoof ID not found"}), 200
         else:
             return jsonify({"spoofData": {"requestID": spoofData[0], "userID": spoofData[1], "shipID": spoofData[2],
                                           "locationEPFS": spoofData[3], "longitude": spoofData[4],
@@ -336,7 +336,7 @@ def getSpoofData():
                  "currentTime": spoofData[i][12]} for i in range(len(spoofData))]}), 200
 
 
-@app.route('/api/spoofShip', methods=['GET'])
+@app.route('/api/spoofShip', methods=['POST'])
 def spoofShip():
     if request.is_json:
         request_data = request.get_json()
@@ -345,7 +345,7 @@ def spoofShip():
         request_data = request_data.popitem()[1]
 
     if not validate_json(request_data, 'getSpoofData'):
-        return jsonify({"error": "Invalid JSON"}), 400
+        return jsonify({"error": "Invalid Request"}), 400
 
     apiKey = sanitizeInput(str(request_data['user']['apiKey']))
     if checkApiLimit(apiKey) is not None:
@@ -366,14 +366,14 @@ def spoofShip():
     sqlcursor.execute("SELECT mmsi FROM ships WHERE shipID = '" + shipID + "';")
     shipData = sqlcursor.fetchone()
     if shipData is None:
-        return jsonify({"error": "Ship ID not found"}), 400
+        return jsonify({"error": "Ship ID not found"}), 200
     else:
         mmsi = shipData[0]
 
     sqlcursor.execute("SELECT userID FROM user WHERE apiKey = '" + apiKey + "';")
     userData = sqlcursor.fetchone()
     if userData is None:
-        return jsonify({"error": "User not found"}), 400
+        return jsonify({"error": "User not found"}), 200
     else:
         userID = userData[0]
 
