@@ -1,0 +1,34 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "GetShip",
+  "description": "JSON scheme to request information about a ship",
+  "type": "object",
+  "properties": {
+    "ship": {
+      "type": "object",
+      "properties": {
+        "shipID": {
+          "description": "ID of the ship to get",
+          "type": "number",
+          "minimum": 1
+        }
+      }
+    },
+    "user": {
+      "type": "object",
+      "properties": {
+        "apiKey": {
+          "description": "API key of the user",
+          "type": "string",
+          "maxLength": 20
+        }
+      },
+      "required": [
+        "apiKey"
+      ]
+    }
+  },
+  "required": [
+    "user"
+  ]
+}
