@@ -363,14 +363,14 @@ def spoofShip():
     rot = sanitizeInput(str(request_data['AIS']['rot']))
     status = sanitizeInput(str(request_data['AIS']['status']))
 
-    sqlcursor.execute("SELECT mmsi FROM ships WHERE shipID = '" + shipID + "';")
+    sqlcursor.execute("SELECT mmsi FROM shipstatic WHERE shipID = '" + shipID + "';")
     shipData = sqlcursor.fetchone()
     if shipData is None:
         return jsonify({"error": "Ship ID not found"}), 200
     else:
         mmsi = shipData[0]
 
-    sqlcursor.execute("SELECT userID FROM user WHERE apiKey = '" + apiKey + "';")
+    sqlcursor.execute("SELECT userID FROM users WHERE apiKey = '" + apiKey + "';")
     userData = sqlcursor.fetchone()
     if userData is None:
         return jsonify({"error": "User not found"}), 200
@@ -383,7 +383,7 @@ def spoofShip():
         os.system("AISTX.py -p " + str(aisPayload))
     except:
         return jsonify({"error": "AIS transmission failed"}), 500
-    sqlcursor.execute("INSERT INTO spoofs (userID, shipID, longitude, latitude, timestamp, cog, sog, heading, rot, status) VALUES ('" + userID + "', '" + shipID + "', '" + longitude + "', '" + latitude + "', '" + timestamp + "', '" + timestamp + "', '" + course + "', '" + speed + "', '" + heading + "', '" + rot + "', '" + status + "');")
+    sqlcursor.execute("INSERT INTO requests (userID, shipID, longitude, latitude, timestamp, cog, sog, heading, rot, status) VALUES ('" + userID + "', '" + shipID + "', '" + longitude + "', '" + latitude + "', '" + timestamp + "', '" + timestamp + "', '" + course + "', '" + speed + "', '" + heading + "', '" + rot + "', '" + status + "');")
 
 
-app.run(host='0.0.0.0', port=1234)  # TODO: change this
+app.run(host='127.0.0.1', port=1234)  # TODO: change this
