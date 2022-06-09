@@ -1,0 +1,93 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "spoofShip",
+  "description": "json scheme for spoofing a ship",
+  "type": "object",
+  "properties": {
+    "ship": {
+      "type": "object",
+      "properties": {
+        "shipID": {
+          "description": "shipID from db of ship to spoof",
+          "type": "string"
+        }
+      },
+      "required": [
+        "shipID"
+      ]
+    },
+    "AIS": {
+      "type": "object",
+      "properties": {
+        "longitude": {
+          "description": "longitude of ship",
+          "type": "string",
+          "pattern": "^(-[1-9]|-?[1-9]\\d|-?1[0-7]\\d|-?180|\\d)$"
+        },
+        "latitude": {
+          "description": "latitude of ship",
+          "type": "string",
+          "pattern": "^(-[1-9]|-?[1-8]\\d|-?90|\\d)$"
+        },
+        "timestamp": {
+          "description": "timestamp of AIS signal",
+          "type": "string",
+          "pattern": "^(\\d|[1-5]\\d|6[0-3])$"
+        },
+        "course": {
+          "description": "course of ship",
+          "type": "string",
+          "pattern": "^(\\d|[1-9]\\d{1,2}|[12]\\d{3}|3[0-5]\\d{2}|3600)$"
+        },
+        "speed": {
+          "description": "speed of ship",
+          "type": "string",
+          "pattern": "^(\\d|[1-9]\\d{1,2}|10[01]\\d|102[0-2])$"
+        },
+        "heading": {
+          "description": "heading of ship",
+          "type": "string",
+          "pattern": "^(\\d|[1-9]\\d|[12]\\d{2}|3[0-5]\\d)$"
+        },
+        "rot": {
+          "description": "rotation of ship",
+          "type": "string",
+          "pattern": "^(-[1-9]|-12[0-7]|-?[1-9]\\d|-?1[01]\\d|\\d|12[0-8])$"
+        },
+        "status": {
+          "description": "status of ship",
+          "type": "string",
+          "pattern": "^(\\d|1[0-5])$"
+        }
+      },
+      "required": [
+        "longitude",
+        "latitude",
+        "timestamp",
+        "course",
+        "speed",
+        "heading",
+        "rot",
+        "status"
+      ]
+    },
+    "user": {
+      "type": "object",
+      "properties": {
+        "apiKey": {
+          "description": "API key of the user",
+          "type": "string",
+          "maxLength": 50
+        }
+      },
+      "required": [
+        "apiKey"
+      ]
+    }
+  },
+  "required": [
+    "ship",
+    "AIS",
+    "user"
+  ]
+}

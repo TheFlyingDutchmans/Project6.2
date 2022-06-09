@@ -1,0 +1,50 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "EncodeAIS",
+  "description": "EncodeAIS schema",
+  "type": "object",
+  "properties": {
+    "AIS": {
+      "type": "object",
+      "properties": {
+        "binary": {
+          "type": "string",
+          "description": "AIS binary payload to be decoded"
+        },
+        "AIVDM": {
+          "type": "string",
+          "description": "AIVDM payload to be decoded"
+        }
+      },
+      "oneOf": [
+        {
+          "required": [
+            "binary"
+          ]
+        },
+        {
+          "required": [
+            "AIVDM"
+          ]
+        }
+      ]
+    },
+    "user": {
+      "type": "object",
+      "properties": {
+        "apiKey": {
+          "description": "API key of the user",
+          "type": "string",
+          "maxLength": 50
+        }
+      },
+      "required": [
+        "apiKey"
+      ]
+    }
+  },
+  "required": [
+    "AIS",
+    "user"
+  ]
+}
