@@ -14,8 +14,8 @@ app.secret_key = "zb#f8!_wj8aiwjpfh*w%=_!+*fkvvcki(3c9(18a+!4mxhdkd"  # Secret k
 try:
     aisDB = mysql.connector.connect(  # Connect to the database
         host="localhost",
-        user="apiUser",
-        passwd="securePassword",
+        user="root",
+        passwd="",
         database="theflyingdutchman",
         auth_plugin='mysql_native_password'
     )
@@ -29,7 +29,7 @@ encodeVocabulary = "0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVW`abcdefghijklmnopqrs
 
 def decreaseLimit(apiKey):  # Function to decrease the API limit of specified user
     sqlcursor.execute(
-        "UPDATE users SET apiLimit = apiLimit - 1 WHERE apiKey = '" + apiKey + "';")  # Call SQL procedure to decrease the API limit
+        "UPDATE users SET apiLimit = apiLimit - 1 WHERE apiKey = '" + apiKey + "';")  # Decrease the API limit of specified user
     aisDB.commit()
 
 
@@ -37,7 +37,7 @@ def checkApiLimit(apiKey):  # Checks if the API limit is exceeded
     if apiKey == None:
         return jsonify({"error": "API Key not specified"})
     sqlcursor.execute(
-        "SELECT apiLimit FROM users WHERE apiKey = '" + apiKey + "';")  # Call SQL procedure to get the API limit of specified user
+        "SELECT apiLimit FROM users WHERE apiKey = '" + apiKey + "';")  # Get apiLimit of user with specified apiKey
     apiLimit = sqlcursor.fetchone()  # Get the API limit of specified user
     if apiLimit is None:
         return jsonify({"error": "API Key not found"})  # Return error if API key is not found
@@ -73,7 +73,7 @@ def validate_json(json_data, request):  # Validates the JSON against the JSON sc
     return True
 
 
-def encodeAISBinary_1(mmsi, status, speed, long, lat, course, true_heading, ts):  # Encodes type 1 AIS messages
+def encodeAISBinary_1(mmsi, status, speed, lat, long, course, true_heading, ts):  # Encodes type 1 AIS messages
     _type = '{0:b}'.format(1).rjust(6, '0')  # 18
     _repeat = "00"  # repeat     (directive to an AIS transceiver that this message should be rebroadcast.)
     _mmsi = '{0:b}'.format(mmsi).rjust(30, '0')  # 30 bits (247320162)
@@ -83,10 +83,8 @@ def encodeAISBinary_1(mmsi, status, speed, long, lat, course, true_heading, ts):
     _speed = '{0:b}'.format(int(round(speed))).rjust(10,
                                                      '0')  # Speed over ground is in 1 1/10th-knot resolution from 0 to 102 knots. value 1023 indicates speed is not available, value 1022 indicates 102.2 knots or higher.
     _accurancy = '0'  # > 10m
-    _long = '{0:b}'.format(int(round(long * 600000)) & 0b1111111111111111111111111111).rjust(28,
-                                                                                             '0')  # -180 to 180, 181 is unavaliable
-    _lat = '{0:b}'.format(int(round(lat * 600000)) & 0b111111111111111111111111111).rjust(27,
-                                                                                          '0')  # -90 to 90, 91 is unavailable
+    _long = '{0:b}'.format(int(round(long * 600000)) & 0b1111111111111111111111111111).rjust(28,'0')  # -180 to 180, 181 is unavaliable
+    _lat = '{0:b}'.format(int(round(lat *600000)) & 0b111111111111111111111111111).rjust(27,'0')  # -90 to 90, 91 is unavailable
     _course = '{0:b}'.format(int(round(course))).rjust(12,
                                                        '0')  # 1 resolution. Course over ground will be 3600 (0xE10) if that data is not available.
     _true_heading = '{0:b}'.format(int(round(true_heading))).rjust(9, '0')  # 511 (N/A)
@@ -97,7 +95,8 @@ def encodeAISBinary_1(mmsi, status, speed, long, lat, course, true_heading, ts):
     # '0': Raim flag
     _rstatus = '0' * 19
     # '11100000000000000110' : Radio status
-    return _type + _repeat + _mmsi + _status + _rot + _speed + _accurancy + _lat + _long + _course + _true_heading + _ts + _flags + _rstatus
+
+    return _type + _repeat + _mmsi + _status + _rot + _speed + _accurancy + _long + _lat + _course + _true_heading + _ts + _flags + _rstatus
 
 
 @app.route('/api/newShip', methods=['POST'])  # API endpoint for adding a new ship to the database
@@ -230,16 +229,16 @@ def encodeAIS():
     else:
         decreaseLimit(apiKey)
 
-    mmsi = request_data['ship']['mmsi']
-    status = request_data['AIS']['status']
-    speed = request_data['AIS']['speed']
-    longitude = request_data['AIS']['longitude']
-    latitude = request_data['AIS']['latitude']
-    course = request_data['AIS']['course']
-    trueHeading = request_data['AIS']['trueHeading']
-    timestamp = request_data['AIS']['timestamp']
+    mmsi = int(request_data['ship']['mmsi'])
+    status = int(request_data['AIS']['status'])
+    speed =  int(request_data['AIS']['speed'])
+    longitude =  int(request_data['AIS']['longitude'])
+    latitude =  int(request_data['AIS']['latitude'])
+    course =  int(request_data['AIS']['course'])
+    trueHeading =  int(request_data['AIS']['trueHeading'])
+    timestamp =  int(request_data['AIS']['timestamp'])
 
-    aisBinary = encodeAISBinary_1(mmsi, status, speed, longitude, latitude, course, trueHeading,
+    aisBinary = encodeAISBinary_1(mmsi, status, speed, latitude, longitude, course, trueHeading,
                                   timestamp)  # Encode the AIS data into binary
 
     binaryArray = textwrap.wrap(aisBinary, 6)  # Split the binary data into an array of 6-bit binary strings
@@ -247,6 +246,7 @@ def encodeAIS():
     for binary6Bit in binaryArray:  # Loop through the 6-bit binary strings
         decimal = int(binary6Bit, 2)  # Convert the 6-bit binary string to a decimal number
         payload += encodeVocabulary[decimal]  # Add the encoded character to the payload
+    print (payload)
     return jsonify({"AISMessage": payload,
                     "AISMessageBinary": aisBinary}), 200  # Return the AIS message and the AIS message binary
 
@@ -361,7 +361,7 @@ def spoofShip():
         request_data = xmltodict.parse(request.data)
         request_data = request_data.popitem()[1]
 
-    if not validate_json(request_data, 'getSpoofData'):
+    if not validate_json(request_data, 'spoofShip'):
         return jsonify({"error": "Invalid Request"}), 400
 
     apiKey = sanitizeInput(str(request_data['user']['apiKey']))
@@ -385,25 +385,30 @@ def spoofShip():
     if shipData is None:  # Check if the MMSI was not found
         return jsonify({"error": "Ship ID not found"}), 200  # Return the error if the MMSI was not found
     else:
-        mmsi = shipData[0]  # Get the MMSI from the database
+        mmsi = str(shipData[0]) # Get the MMSI from the database
 
     sqlcursor.execute("SELECT userID FROM users WHERE apiKey = '" + apiKey + "';")  # Get the user ID from the database
     userData = sqlcursor.fetchone()  # Get the user ID from the database
     if userData is None:  # Check if the user ID was not found
         return jsonify({"error": "User not found"}), 200  # Return the error if the user ID was not found
     else:
-        userID = userData[0]  # Get the user ID from the database
+        userID = str(userData[0])  # Get the user ID from the database
 
-    aisPayload = encodeAISBinary_1(mmsi, status, speed, longitude, latitude, course, heading,
-                                   timestamp)  # Encode the AIS message
+    aisPayload = encodeAISBinary_1( int(mmsi),  int(status),  int(speed), int(latitude), int(longitude), int(course),  int(heading), int(timestamp)) # Encode the AIS message
 
     try:
-        os.system("AISTX.py -p " + str(aisPayload))  # Send the AIS message to the AIS transmitter
+        #see if file with name AISTX exists
+        if os.path.isfile('AISTX.py'):
+            os.system("AISTX.py -p " + str(aisPayload))  # Send the AIS message to the AIS transmitter
+        else:
+            return jsonify({"error": "AIS transmitter not found"}), 200
     except:
         return jsonify({"error": "AIS transmission failed"}), 500  # Return the error if the AIS message failed to send
 
     sqlcursor.execute(
         "INSERT INTO requests (userID, shipID, longitude, latitude, timestamp, cog, sog, heading, rot, status) VALUES ('" + userID + "', '" + shipID + "', '" + longitude + "', '" + latitude + "', '" + timestamp + "', '" + course + "', '" + speed + "', '" + heading + "', '" + rot + "', '" + status + "');")  # Insert the spoof request into the database
+    aisDB.commit()  # Commit the changes to the database
 
+    return jsonify({"success": "Spoof request sent"}), 200  # Return the success message if the spoof request was sent
 
-app.run(host='0.0.0.0', port=1234)  # TODO: change this
+app.run(host='127.0.0.1', port=1234)  # TODO: change this
