@@ -14,12 +14,12 @@ app.secret_key = "zb#f8!_wj8aiwjpfh*w%=_!+*fkvvcki(3c9(18a+!4mxhdkd"  # Secret k
 try:
     aisDB = mysql.connector.connect(  # Connect to the database
         host="localhost",
-        user="root",
-        passwd="",
+        user="apiUser",
+        passwd="securePassword",
         database="theflyingdutchman",
         auth_plugin='mysql_native_password'
     )
-    sqlcursor = aisDB.cursor()
+    sqlcursor = aisDB.cursor()  # Initialize cursor
 except:
     print("Error connecting to database")  # Print error if database connection fails
     exit()  # Exit program if database connection fails
@@ -28,15 +28,16 @@ encodeVocabulary = "0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVW`abcdefghijklmnopqrs
 
 
 def decreaseLimit(apiKey):  # Function to decrease the API limit of specified user
-    sqlcursor.execute("CALL decreaseApiLimit(%s)", (apiKey,))  # Call SQL procedure to decrease the API limit
+    sqlcursor.execute(
+        "UPDATE users SET apiLimit = apiLimit - 1 WHERE apiKey = '" + apiKey + "';")  # Call SQL procedure to decrease the API limit
     aisDB.commit()
 
 
 def checkApiLimit(apiKey):  # Checks if the API limit is exceeded
     if apiKey == None:
         return jsonify({"error": "API Key not specified"})
-    sqlcursor.execute("CALL getApiLimitByApiKey(%s)",
-                      (apiKey,))  # Call SQL procedure to get the API limit of specified user
+    sqlcursor.execute(
+        "SELECT apiLimit FROM users WHERE apiKey = '" + apiKey + "';")  # Call SQL procedure to get the API limit of specified user
     apiLimit = sqlcursor.fetchone()  # Get the API limit of specified user
     if apiLimit is None:
         return jsonify({"error": "API Key not found"})  # Return error if API key is not found
@@ -52,7 +53,8 @@ def sanitizeInput(input):  # Sanitize input strings
 
 
 def get_json_schema(request):  # Loads in the JSON scheme against which the request data is validated
-    with open(request + '.json', 'r') as file:
+    # Open the JSON schema file from JSON foler in same directory
+    with open(os.path.join(os.path.dirname(__file__), 'json/' + request + '.json'), 'r') as file:
         schema = json.load(file)
     return schema
 
@@ -101,7 +103,7 @@ def encodeAISBinary_1(mmsi, status, speed, long, lat, course, true_heading, ts):
 @app.route('/api/newShip', methods=['POST'])  # API endpoint for adding a new ship to the database
 def newShip():
     def getShipByMMSI(mmsi):  # Function to get the ship data from the database
-        sqlcursor.execute("CALL getShipIdByMmsi(%s)", (mmsi,))
+        sqlcursor.execute("SELECT shipID FROM shipstatic WHERE mmsi = '" + mmsi + "';")
         shipID = sqlcursor.fetchone()
         return shipID
 
@@ -142,8 +144,8 @@ def newShip():
         newName += lastWord  # Add the last word to the new name
         nameOfShip = newName  # Set the name of the ship to the new name
 
-    sqlcursor.execute("CALL insertShipStatic(%s, %s, %s)",
-                      (mmsi, nameOfShip, typeOfShip))  # Insert the ship into the database
+    sqlcursor.execute(
+        "INSERT INTO shipstatic (mmsi, nameOfShip, typeOfShip) VALUES ('" + mmsi + "', '" + nameOfShip + "', '" + typeOfShip + "');")  # Insert the ship into the database
     aisDB.commit()  # Commit the changes to the database
 
     return jsonify({"success": "Ship added",
@@ -171,7 +173,8 @@ def getShip():
         'ship']:  # Check if the ship ID is in the request as part of the ship
         shipID = sanitizeInput(str(request_data['ship']['shipID']))  # Sanitize the ship ID
 
-        sqlcursor.execute("CALL getShipByShipId(%s)", (shipID,))  # Get the ship data from the database
+        sqlcursor.execute(
+            "SELECT * FROM shipstatic WHERE shipID = '" + shipID + "';")  # Get the ship data from the database
         ship = sqlcursor.fetchone()  # Get the ship data from the database
         if ship is None:  # Check if the ship exists in the database
             return jsonify({"error": "Ship not found"}), 200
@@ -202,7 +205,8 @@ def getApiLimit():
 
     userID = sanitizeInput(str(request_data['user']['userID']))
 
-    sqlcursor.execute("CALL selectUserIdAndApiLimit(%s)", userID)  # Get the user ID and API limit from the database
+    sqlcursor.execute(
+        "SELECT userID, apiLimit FROM users WHERE userID = '" + userID + "';")  # Get the user ID and API limit from the database
     apiLimit = sqlcursor.fetchone()  # Get the user ID and API limit from the database
     if apiLimit is None:  # Check if the user exists in the database
         return jsonify({"error": "User not found"}), 200  # Return error if user does not exist
@@ -323,7 +327,8 @@ def getSpoofData():
 
     if 'request' in request_data and 'spoofID' in request_data['request']:  # Check if the request contains the spoof ID
         spoofID = sanitizeInput(str(request_data['request']['spoofID']))  # Get the spoof ID from the request
-        sqlcursor.execute("CALL getRequestByRequestId(%s)", spoofID)  # Get the spoof request from the database
+        sqlcursor.execute(
+            "SELECT * FROM requests WHERE requestID = '" + spoofID + "';")  # Get the spoof request from the database
         spoofData = sqlcursor.fetchone()  # Get the spoof request from the database
         if spoofData is None:
             return jsonify({"error": "Spoof ID not found"}), 200  # Return the error if the spoof ID was not found
@@ -375,14 +380,14 @@ def spoofShip():
     rot = sanitizeInput(str(request_data['AIS']['rot']))
     status = sanitizeInput(str(request_data['AIS']['status']))
 
-    sqlcursor.execute("CALL getMmsiByShipId(%s)", shipID)  # Get the MMSI from the database
+    sqlcursor.execute("SELECT mmsi FROM shipstatic WHERE shipID = '" + shipID + "';")  # Get the MMSI from the database
     shipData = sqlcursor.fetchone()  # Get the MMSI from the database
     if shipData is None:  # Check if the MMSI was not found
         return jsonify({"error": "Ship ID not found"}), 200  # Return the error if the MMSI was not found
     else:
         mmsi = shipData[0]  # Get the MMSI from the database
 
-    sqlcursor.execute("CALL getUserIdByApiKey(%s)", apiKey)  # Get the user ID from the database
+    sqlcursor.execute("SELECT userID FROM users WHERE apiKey = '" + apiKey + "';")  # Get the user ID from the database
     userData = sqlcursor.fetchone()  # Get the user ID from the database
     if userData is None:  # Check if the user ID was not found
         return jsonify({"error": "User not found"}), 200  # Return the error if the user ID was not found
@@ -397,9 +402,8 @@ def spoofShip():
     except:
         return jsonify({"error": "AIS transmission failed"}), 500  # Return the error if the AIS message failed to send
 
-    sqlcursor.execute("CALL insertRequest(%s, %s, %s, %s, %s, %s, %s, %s, %s, %s)", (
-    userID, shipID, longitude, latitude, timestamp, course, speed, heading, rot,
-    status))  # Insert the spoof request into the database
+    sqlcursor.execute(
+        "INSERT INTO requests (userID, shipID, longitude, latitude, timestamp, cog, sog, heading, rot, status) VALUES ('" + userID + "', '" + shipID + "', '" + longitude + "', '" + latitude + "', '" + timestamp + "', '" + course + "', '" + speed + "', '" + heading + "', '" + rot + "', '" + status + "');")  # Insert the spoof request into the database
 
 
-app.run(host='127.0.0.1', port=1234)  # TODO: change this
+app.run(host='0.0.0.0', port=1234)  # TODO: change this
