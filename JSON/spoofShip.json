@@ -20,14 +20,14 @@
       "type": "object",
       "properties": {
         "longitude": {
-          "description": "longitude of ship",
+          "description": "Longitude of the ship",
           "type": "string",
-          "pattern": "^(-[1-9]|-?[1-9]\\d|-?1[0-7]\\d|-?180|\\d)$"
+          "pattern": "^[-+]?([0-1]?[0-8]?\\d(\\.\\d{1,4})?|180(\\.0{1,4})?)$"
         },
         "latitude": {
-          "description": "latitude of ship",
+          "description": "Latitude of the ship",
           "type": "string",
-          "pattern": "^(-[1-9]|-?[1-8]\\d|-?90|\\d)$"
+          "pattern": "^[-+]?([1-8]?\\d(\\.\\d{1,4})?|90(\\.0{1,4})?)$"
         },
         "timestamp": {
           "description": "timestamp of AIS signal",

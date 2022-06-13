@@ -53,7 +53,7 @@ def sanitizeInput(input):  # Sanitize input strings
 
 
 def get_json_schema(request):  # Loads in the JSON scheme against which the request data is validated
-    # Open the JSON schema file from JSON foler in same directory
+    # Open the JSON schema file from JSON folder in same directory
     with open(os.path.join(os.path.dirname(__file__), 'json/' + request + '.json'), 'r') as file:
         schema = json.load(file)
     return schema
@@ -401,6 +401,7 @@ def spoofShip():
         if os.path.isfile('AISTX.py'):
             os.system("AISTX.py -p " + str(aisPayload))  # Send the AIS message to the AIS transmitter
         else:
+            print("AISTX.py not found")
             return jsonify({"error": "AIS transmitter not found"}), 200
     except:
         return jsonify({"error": "AIS transmission failed"}), 500  # Return the error if the AIS message failed to send

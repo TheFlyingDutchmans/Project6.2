@@ -9,11 +9,14 @@
       "properties": {
         "binary": {
           "type": "string",
-          "description": "AIS binary payload to be decoded"
+          "description": "AIS binary payload to be decoded",
+          "pattern": "^[0-1]{168}$"
         },
         "AIVDM": {
           "type": "string",
-          "description": "AIVDM payload to be decoded"
+          "description": "AIVDM payload to be decoded",
+            "pattern": "^[A-Za-z0-9;:<>=?@`]{28}$"
+
         }
       },
       "oneOf": [
