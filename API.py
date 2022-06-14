@@ -346,8 +346,8 @@ def getSpoofData():
             return jsonify({"error": "No spoof data found"}), 400  # Return the error if no spoof data was found
         else:
             return jsonify({"spoofData": [
-                {"request_No": spoofData[i][0], "userID": spoofData[i][1], "shipID": spoofData[i][2],
-                 "locationEPFS": spoofData[i][3], "longitude": spoofData[i][4], "latitude": spoofData[i][5],
+                {"requestID": spoofData[i][0], "userID": spoofData[i][1], "shipID": spoofData[i][2],
+                 "longitude": spoofData[i][4], "latitude": spoofData[i][5],
                  "timestamp": spoofData[i][6], "cog": spoofData[i][7], "sog": spoofData[i][8],
                  "heading": spoofData[i][9], "rot": spoofData[i][10], "status": spoofData[i][11],
                  "currentTime": spoofData[i][12]} for i in range(len(spoofData))]}), 200  # Return the spoof data
