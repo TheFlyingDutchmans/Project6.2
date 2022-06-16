@@ -7,6 +7,7 @@ import json
 import jsonschema
 from jsonschema import validate
 import textwrap
+from os.path import exists
 
 app = Flask(__name__)  # Initialize Flask app
 app.secret_key = "zb#f8!_wj8aiwjpfh*w%=_!+*fkvvcki(3c9(18a+!4mxhdkd"  # Secret key for session - random string
@@ -14,8 +15,8 @@ app.secret_key = "zb#f8!_wj8aiwjpfh*w%=_!+*fkvvcki(3c9(18a+!4mxhdkd"  # Secret k
 try:
     aisDB = mysql.connector.connect(  # Connect to the database
         host="localhost",
-        user="root",
-        passwd="",
+        user="apiUser",
+        passwd="securePassword",
         database="theflyingdutchman",
         auth_plugin='mysql_native_password'
     )
@@ -54,7 +55,7 @@ def sanitizeInput(input):  # Sanitize input strings
 
 def get_json_schema(request):  # Loads in the JSON scheme against which the request data is validated
     # Open the JSON schema file from JSON folder in same directory
-    with open(os.path.join(os.path.dirname(__file__), 'json/' + request + '.json'), 'r') as file:
+    with open(request + '.json', 'r') as file:
         schema = json.load(file)
     return schema
 
@@ -396,15 +397,14 @@ def spoofShip():
 
     aisPayload = encodeAISBinary_1( int(mmsi),  int(status),  int(speed), float(latitude), float(longitude), int(course),  int(heading), int(timestamp)) # Encode the AIS message
 
-    try:
-        #see if file with name AISTX exists
-        if os.path.isfile('AISTX.py'):
-            os.system("AISTX.py -p " + str(aisPayload))  # Send the AIS message to the AIS transmitter
-        else:
-            print("AIS_TX.py not found")
-            return jsonify({"error": "AIS transmitter not found"}), 200
-    except:
-        return jsonify({"error": "AIS transmission failed"}), 500  # Return the error if the AIS message failed to send
+    if exists('AIS_TX.py'):
+        try:
+            os.system("AIS_TX.py -p " + str(aisPayload)) # Send the AIS message
+        except:
+            return jsonify({"error": "Error sending AIS message"}), 400 
+            exit()
+    else:
+        return jsonify({"error": "AIS_TX.py not found"}), 500
 
     sqlcursor.execute(
         "INSERT INTO requests (userID, shipID, longitude, latitude, timestamp, cog, sog, heading, rot, status) VALUES ('" + userID + "', '" + shipID + "', '" + longitude + "', '" + latitude + "', '" + timestamp + "', '" + course + "', '" + speed + "', '" + heading + "', '" + rot + "', '" + status + "');")  # Insert the spoof request into the database
@@ -412,4 +412,4 @@ def spoofShip():
 
     return jsonify({"success": "Spoof request sent"}), 200  # Return the success message if the spoof request was sent
 
-app.run(host='127.0.0.1', port=1234)  # TODO: change this
+app.run(host='0.0.0.0', port=1234)  # TODO: change this
