@@ -394,7 +394,7 @@ def spoofShip():
     else:
         userID = str(userData[0])  # Get the user ID from the database
 
-    aisPayload = encodeAISBinary_1( int(mmsi),  int(status),  int(speed), int(latitude), int(longitude), int(course),  int(heading), int(timestamp)) # Encode the AIS message
+    aisPayload = encodeAISBinary_1( int(mmsi),  int(status),  int(speed), float(latitude), float(longitude), int(course),  int(heading), int(timestamp)) # Encode the AIS message
 
     try:
         #see if file with name AISTX exists
