@@ -397,14 +397,13 @@ def spoofShip():
 
     aisPayload = encodeAISBinary_1( int(mmsi),  int(status),  int(speed), float(latitude), float(longitude), int(course),  int(heading), int(timestamp)) # Encode the AIS message
 
-    if exists('AIS_TX.py'):
-        try:
-            os.system("AIS_TX.py -p " + str(aisPayload)) # Send the AIS message
-        except:
-            return jsonify({"error": "Error sending AIS message"}), 400 
-            exit()
-    else:
-        return jsonify({"error": "AIS_TX.py not found"}), 500
+    directory_path = os.getcwd()
+
+    try:
+        os.system("python3 " + directory_path + "/AIS_TX.py -p " + str(aisPayload)) # Send the AIS message
+    except:
+        return jsonify({"error": "Error sending AIS message"}), 400
+        exit()
 
     sqlcursor.execute(
         "INSERT INTO requests (userID, shipID, longitude, latitude, timestamp, cog, sog, heading, rot, status) VALUES ('" + userID + "', '" + shipID + "', '" + longitude + "', '" + latitude + "', '" + timestamp + "', '" + course + "', '" + speed + "', '" + heading + "', '" + rot + "', '" + status + "');")  # Insert the spoof request into the database
