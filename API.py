@@ -401,7 +401,7 @@ def spoofShip():
         if os.path.isfile('AISTX.py'):
             os.system("AISTX.py -p " + str(aisPayload))  # Send the AIS message to the AIS transmitter
         else:
-            print("AISTX.py not found")
+            print("AIS_TX.py not found")
             return jsonify({"error": "AIS transmitter not found"}), 200
     except:
         return jsonify({"error": "AIS transmission failed"}), 500  # Return the error if the AIS message failed to send
