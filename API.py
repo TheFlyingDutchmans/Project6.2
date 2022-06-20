@@ -7,7 +7,6 @@ import json
 import jsonschema
 from jsonschema import validate
 import textwrap
-from os.path import exists
 
 app = Flask(__name__)  # Initialize Flask app
 app.secret_key = "zb#f8!_wj8aiwjpfh*w%=_!+*fkvvcki(3c9(18a+!4mxhdkd"  # Secret key for session - random string
@@ -15,8 +14,8 @@ app.secret_key = "zb#f8!_wj8aiwjpfh*w%=_!+*fkvvcki(3c9(18a+!4mxhdkd"  # Secret k
 try:
     aisDB = mysql.connector.connect(  # Connect to the database
         host="localhost",
-        user="apiUser",
-        passwd="securePassword",
+        user="root",
+        passwd="",
         database="theflyingdutchman",
         auth_plugin='mysql_native_password'
     )
@@ -84,8 +83,10 @@ def encodeAISBinary_1(mmsi, status, speed, lat, long, course, true_heading, ts):
     _speed = '{0:b}'.format(int(round(speed))).rjust(10,
                                                      '0')  # Speed over ground is in 1 1/10th-knot resolution from 0 to 102 knots. value 1023 indicates speed is not available, value 1022 indicates 102.2 knots or higher.
     _accurancy = '0'  # > 10m
-    _long = '{0:b}'.format(int(round(long * 600000)) & 0b1111111111111111111111111111).rjust(28,'0')  # -180 to 180, 181 is unavaliable
-    _lat = '{0:b}'.format(int(round(lat *600000)) & 0b111111111111111111111111111).rjust(27,'0')  # -90 to 90, 91 is unavailable
+    _long = '{0:b}'.format(int(round(long * 600000)) & 0b1111111111111111111111111111).rjust(28,
+                                                                                             '0')  # -180 to 180, 181 is unavaliable
+    _lat = '{0:b}'.format(int(round(lat * 600000)) & 0b111111111111111111111111111).rjust(27,
+                                                                                          '0')  # -90 to 90, 91 is unavailable
     _course = '{0:b}'.format(int(round(course))).rjust(12,
                                                        '0')  # 1 resolution. Course over ground will be 3600 (0xE10) if that data is not available.
     _true_heading = '{0:b}'.format(int(round(true_heading))).rjust(9, '0')  # 511 (N/A)
@@ -232,12 +233,12 @@ def encodeAIS():
 
     mmsi = int(request_data['ship']['mmsi'])
     status = int(request_data['AIS']['status'])
-    speed =  int(request_data['AIS']['speed'])
-    longitude =  float(request_data['AIS']['longitude'])
-    latitude =  float(request_data['AIS']['latitude'])
-    course =  int(request_data['AIS']['course'])
-    trueHeading =  int(request_data['AIS']['trueHeading'])
-    timestamp =  int(request_data['AIS']['timestamp'])
+    speed = int(request_data['AIS']['speed'])
+    longitude = float(request_data['AIS']['longitude'])
+    latitude = float(request_data['AIS']['latitude'])
+    course = int(request_data['AIS']['course'])
+    trueHeading = int(request_data['AIS']['trueHeading'])
+    timestamp = int(request_data['AIS']['timestamp'])
 
     aisBinary = encodeAISBinary_1(mmsi, status, speed, latitude, longitude, course, trueHeading,
                                   timestamp)  # Encode the AIS data into binary
@@ -247,7 +248,7 @@ def encodeAIS():
     for binary6Bit in binaryArray:  # Loop through the 6-bit binary strings
         decimal = int(binary6Bit, 2)  # Convert the 6-bit binary string to a decimal number
         payload += encodeVocabulary[decimal]  # Add the encoded character to the payload
-    print (payload)
+    print(payload)
     return jsonify({"AISMessage": payload,
                     "AISMessageBinary": aisBinary}), 200  # Return the AIS message and the AIS message binary
 
@@ -335,11 +336,11 @@ def getSpoofData():
             return jsonify({"error": "Spoof ID not found"}), 200  # Return the error if the spoof ID was not found
         else:
             return jsonify({"spoofData": {"requestID": spoofData[0], "userID": spoofData[1], "shipID": spoofData[2],
-                                          "locationEPFS": spoofData[3], "longitude": spoofData[4],
-                                          "latitude": spoofData[5], "timestamp": spoofData[6], "cog": spoofData[7],
-                                          "sog": spoofData[8], "heading": spoofData[9], "rot": spoofData[10],
-                                          "status": spoofData[11],
-                                          "currentTime": spoofData[12]}}), 200  # Return the spoof data
+                                          "longitude": spoofData[3],
+                                          "latitude": spoofData[4], "timestamp": spoofData[5], "cog": spoofData[6],
+                                          "sog": spoofData[7], "heading": spoofData[8], "rot": spoofData[9],
+                                          "status": spoofData[10],
+                                          "currentTime": spoofData[11]}}), 200  # Return the spoof data
     else:
         sqlcursor.execute("SELECT * FROM requests;")  # Get all the spoof requests from the database
         spoofData = sqlcursor.fetchall()  # Get all the spoof requests from the database
@@ -386,7 +387,7 @@ def spoofShip():
     if shipData is None:  # Check if the MMSI was not found
         return jsonify({"error": "Ship ID not found"}), 200  # Return the error if the MMSI was not found
     else:
-        mmsi = str(shipData[0]) # Get the MMSI from the database
+        mmsi = str(shipData[0])  # Get the MMSI from the database
 
     sqlcursor.execute("SELECT userID FROM users WHERE apiKey = '" + apiKey + "';")  # Get the user ID from the database
     userData = sqlcursor.fetchone()  # Get the user ID from the database
@@ -395,12 +396,13 @@ def spoofShip():
     else:
         userID = str(userData[0])  # Get the user ID from the database
 
-    aisPayload = encodeAISBinary_1( int(mmsi),  int(status),  int(speed), float(latitude), float(longitude), int(course),  int(heading), int(timestamp)) # Encode the AIS message
+    aisPayload = encodeAISBinary_1(int(mmsi), int(status), int(speed), float(latitude), float(longitude), int(course),
+                                   int(heading), int(timestamp))  # Encode the AIS message
 
     directory_path = os.getcwd()
 
     try:
-        os.system("python3 " + directory_path + "/AIS_TX.py -p " + str(aisPayload)) # Send the AIS message
+        os.system("python3 " + directory_path + "/AIS_TX.py -p " + str(aisPayload))  # Send the AIS message
     except:
         return jsonify({"error": "Error sending AIS message"}), 400
         exit()
@@ -411,4 +413,5 @@ def spoofShip():
 
     return jsonify({"success": "Spoof request sent"}), 200  # Return the success message if the spoof request was sent
 
-app.run(host='0.0.0.0', port=1234)  # TODO: change this
+
+app.run(host='127.0.0.1', port=1234)  # TODO: change this
