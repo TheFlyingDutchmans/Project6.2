@@ -1,0 +1,33 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "getSpoofData",
+  "description": "gettingSpoofData json schema",
+  "type": "object",
+  "properties": {
+    "request": {
+      "type": "object",
+      "properties": {
+        "spoofID": {
+          "description": "spoofID to get from the database",
+          "type": "integer"
+        }
+      },
+      "user": {
+        " type": "object",
+        "properties": {
+          "apiKey": {
+            "description": "API key of the user",
+            "type": "string",
+            "maxLength": 50
+          }
+        },
+        "required": [
+          "apiKey"
+        ]
+      }
+    }
+  },
+  "required": [
+    "user"
+  ]
+}

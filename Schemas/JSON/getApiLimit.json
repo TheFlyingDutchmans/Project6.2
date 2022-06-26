@@ -1,0 +1,30 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "getApiLimit",
+  "description": "JSON scheme to request information about a user",
+  "type": "object",
+  "properties": {
+    "user": {
+      "type": "object",
+      "properties": {
+        "apiKey": {
+          "description": "API key of the user making the request",
+          "type": "string",
+          "maxLength": 50
+        },
+        "userID": {
+          "description": "User ID of the user whose limit is to be shown",
+          "type": "integer",
+          "maxLength": 20
+        }
+      },
+      "required": [
+        "apiKey",
+        "userID"
+      ]
+    }
+  },
+  "required": [
+    "user"
+  ]
+}
