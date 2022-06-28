@@ -1,3 +1,5 @@
+The API currently only runs on Python 3.9. Make sure to run the API using this version of Python as some packages used will not work with other versions of Python.  
+
 Schemas -> Hold the JSON and XML Schemas used to verify the request data  
     JSON -> Has the JSON Schemas for all requests  
     XML -> Has the XSD files for all requests  
