@@ -1,4 +1,4 @@
-The API currently only runs on Python 3.9. Make sure to run the API using this version of Python as some packages used will not work with other versions of Python.  
+The API currently only runs on Python 3.9. Make sure to run the API using this version of Python as some packages used will not work with other versions of Python. 
 
 Configure `config/dbConn.ini` file according to your database. 
 
@@ -19,8 +19,6 @@ For the data visualisation:
 3. Run `datavisualisation/dv.py`
 
 
-
-bb4bc94f2922ab34fb2af4691b0b3a622c3b1349
 Schemas -> Hold the JSON and XML Schemas used to verify the request data  
 JSON -> Has the JSON Schemas for all requests  
 XML -> Has the XSD files for all requests  
