@@ -8,6 +8,8 @@ remark: `theflyingdutchman.sql` file only adds the tables, not the database itse
 
 Run API: `API_3.py`
 
+remark: Endpoint SpoofShip will only work with the transmit-receive setup configured and running
+
 
 
 For the data visualisation:
@@ -15,6 +17,8 @@ For the data visualisation:
 1. Ensure API is running
 2. Database is set-up
 3. Run `datavisualisation/dv.py`
+
+
 
 
 
