@@ -9,7 +9,7 @@
       "properties": {
         "shipID": {
           "description": "shipID from db of ship to spoof",
-          "type": "string"
+          "type": "integer"
         }
       },
       "required": [
@@ -21,42 +21,42 @@
       "properties": {
         "longitude": {
           "description": "Longitude of the ship",
-          "type": "string",
+          "type": "number",
           "pattern": "^[-+]?([0-1]?[0-8]?\\d(\\.\\d{1,4})?|180(\\.0{1,4})?)$"
         },
         "latitude": {
           "description": "Latitude of the ship",
-          "type": "string",
+          "type": "number",
           "pattern": "^[-+]?([1-8]?\\d(\\.\\d{1,4})?|90(\\.0{1,4})?)$"
         },
         "timestamp": {
           "description": "timestamp of AIS signal",
-          "type": "string",
+          "type": "integer",
           "pattern": "^(\\d|[1-5]\\d|6[0-3])$"
         },
         "course": {
           "description": "course of ship",
-          "type": "string",
+          "type": "integer",
           "pattern": "^(\\d|[1-9]\\d{1,2}|[12]\\d{3}|3[0-5]\\d{2}|3600)$"
         },
         "speed": {
           "description": "speed of ship",
-          "type": "string",
+          "type": "number",
           "pattern": "^(\\d|[1-9]\\d{1,2}|10[01]\\d|102[0-2])$"
         },
         "heading": {
           "description": "heading of ship",
-          "type": "string",
+          "type": "number",
           "pattern": "^(\\d|[1-9]\\d|[12]\\d{2}|3[0-5]\\d)$"
         },
         "rot": {
-          "description": "rotation of ship",
-          "type": "string",
+          "description": "rotation ofd turn of ship",
+          "type": "number",
           "pattern": "^(-[1-9]|-12[0-7]|-?[1-9]\\d|-?1[01]\\d|\\d|12[0-8])$"
         },
         "status": {
-          "description": "status of ship",
-          "type": "string",
+          "description": "navigational status of ship",
+          "type": "integer",
           "pattern": "^(\\d|1[0-5])$"
         }
       },

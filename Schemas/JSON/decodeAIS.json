@@ -1,4 +1,4 @@
-{
+  {
   "$schema": "http://json-schema.org/draft-07/schema#",
   "title": "EncodeAIS",
   "description": "EncodeAIS schema",
@@ -15,7 +15,7 @@
         "AIVDM": {
           "type": "string",
           "description": "AIVDM payload to be decoded",
-            "pattern": "^[A-Za-z0-9;:<>=?@`]{28}$"
+            "pattern": "^[A-Za-z\\d;:<>=?@`]{28}$"
 
         }
       },

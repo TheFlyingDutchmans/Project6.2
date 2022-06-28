@@ -1,0 +1,124 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema elementFormDefault="qualified"
+           xmlns:xs="http://www.w3.org/2001/XMLSchema">
+    <xs:element name="root">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="ship">
+                    <xs:complexType>
+                        <xs:sequence>
+                            <xs:element type="xs:int" name="shipID">
+                                <xs:annotation>
+                                    <xs:documentation>ID of the ship to spoof</xs:documentation>
+                                </xs:annotation>
+                            </xs:element>
+                        </xs:sequence>
+                    </xs:complexType>
+                </xs:element>
+                <xs:element name="AIS">
+                    <xs:complexType>
+                        <xs:sequence>
+                            <xs:element name="longitude">
+                                <xs:annotation>
+                                    <xs:documentation>Longitude of the ship</xs:documentation>
+                                </xs:annotation>
+                                <xs:simpleType>
+                                    <xs:restriction base="xs:float">
+                                        <xs:pattern value="[-+]?([0-1]?[0-8]?\d(\.\d{1,4})?|180(\.0{1,4})?)"/>
+                                    </xs:restriction>
+                                </xs:simpleType>
+                            </xs:element>
+                            <xs:element name="latitude">
+                                <xs:annotation>
+                                    <xs:documentation>Latitude of the ship</xs:documentation>
+                                </xs:annotation>
+                                <xs:simpleType>
+                                    <xs:restriction base="xs:float">
+                                        <xs:pattern value="[-+]?([1-8]?\d(\.\d{1,4})?|90(\.0{1,4})?)"/>
+                                    </xs:restriction>
+                                </xs:simpleType>
+                            </xs:element>
+
+                            <xs:element name="timestamp">
+                                <xs:annotation>
+                                    <xs:documentation>Timestamp of the AIS message</xs:documentation>
+                                </xs:annotation>
+                                <xs:simpleType>
+                                    <xs:restriction base="xs:int">
+                                        <xs:pattern value="(\d|[1-5]\d|6[0-3])"/>
+                                    </xs:restriction>
+                                </xs:simpleType>
+                            </xs:element>
+                            <xs:element name="course">
+                                <xs:annotation>
+                                    <xs:documentation>Course of the ship</xs:documentation>
+                                </xs:annotation>
+                                <xs:simpleType>
+                                    <xs:restriction base="xs:int">
+                                        <xs:pattern value="(\d|[1-9]\d{1,2}|[12]\d{3}|3[0-5]\d{2}|3600)"/>
+                                    </xs:restriction>
+                                </xs:simpleType>
+                            </xs:element>
+                            <xs:element name="speed">
+                                <xs:annotation>
+                                    <xs:documentation>Speed of the ship</xs:documentation>
+                                </xs:annotation>
+                                <xs:simpleType>
+                                    <xs:restriction base="xs:int">
+                                        <xs:pattern value="(\d|[1-9]\d{1,2}|10[01]\d|102[0-2])"/>
+                                    </xs:restriction>
+                                </xs:simpleType>
+                            </xs:element>
+                            <xs:element name="heading">
+                                <xs:annotation>
+                                    <xs:documentation>Heading of the ship</xs:documentation>
+                                </xs:annotation>
+                                <xs:simpleType>
+                                    <xs:restriction base="xs:int">
+                                        <xs:pattern value="(\d|[1-9]\d|[12]\d{2}|3[0-5]\d)"/>
+                                    </xs:restriction>
+                                </xs:simpleType>
+                            </xs:element>
+                            <xs:element name="rot">
+                                <xs:annotation>
+                                    <xs:documentation>Rote of turn of the ship</xs:documentation>
+                                </xs:annotation>
+                                <xs:simpleType>
+                                    <xs:restriction base="xs:int">
+                                        <xs:pattern value="(-[1-9]|-12[0-7]|-?[1-9]\d|-?1[01]\d|\d|12[0-8])"/>
+                                    </xs:restriction>
+                                </xs:simpleType>
+                            </xs:element>
+                            <xs:element name="status">
+                                <xs:annotation>
+                                    <xs:documentation>Navigational status of the ship</xs:documentation>
+                                </xs:annotation>
+                                <xs:simpleType>
+                                    <xs:restriction base="xs:int">
+                                        <xs:pattern value="(\d|1[0-5])"/>
+                                    </xs:restriction>
+                                </xs:simpleType>
+                            </xs:element>
+                        </xs:sequence>
+                    </xs:complexType>
+                </xs:element>
+                <xs:element name="user">
+                    <xs:complexType>
+                        <xs:sequence>
+                            <xs:element name="apiKey">
+                                <xs:annotation>
+                                    <xs:documentation>API key of the user</xs:documentation>
+                                </xs:annotation>
+                                <xs:simpleType>
+                                    <xs:restriction base="xs:string">
+                                        <xs:maxLength value="50"/>
+                                    </xs:restriction>
+                                </xs:simpleType>
+                            </xs:element>
+                        </xs:sequence>
+                    </xs:complexType>
+                </xs:element>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+</xs:schema>

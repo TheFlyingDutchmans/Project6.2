@@ -8,13 +8,13 @@
       "type": "object",
       "properties": {
         "apiKey": {
-          "description": "API key of the user",
+          "description": "API key of the user making the request",
           "type": "string",
           "maxLength": 50
         },
         "userID": {
-          "description": "User ID of the user",
-          "type": "string",
+          "description": "User ID of the user whose limit is to be shown",
+          "type": "integer",
           "maxLength": 20
         }
       },

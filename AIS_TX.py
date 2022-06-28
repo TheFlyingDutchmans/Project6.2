@@ -53,16 +53,16 @@ class top_block(gr.top_block):
         self.osmosdr_sink_0.set_antenna('', 0)
         self.osmosdr_sink_0.set_bandwidth(0, 0)
         self.digital_gmsk_mod_0_0 = digital.gmsk_mod(
-            samples_per_symbol=int(samp_rate/bit_rate),
+            samples_per_symbol=int(samp_rate / bit_rate),
             bt=0.4,
             verbose=False,
             log=False)
         self.digital_gmsk_mod_0 = digital.gmsk_mod(
-            samples_per_symbol=int(samp_rate/bit_rate),
+            samples_per_symbol=int(samp_rate / bit_rate),
             bt=0.4,
             verbose=False,
             log=False)
-        self.blocks_selector_0 = blocks.selector(gr.sizeof_gr_complex*1,channel_select,0)
+        self.blocks_selector_0 = blocks.selector(gr.sizeof_gr_complex * 1, channel_select, 0)
         self.blocks_selector_0.set_enabled(True)
         self.blocks_multiply_xx_0_0 = blocks.multiply_vcc(1)
         self.blocks_multiply_xx_0 = blocks.multiply_vcc(1)
@@ -75,7 +75,6 @@ class top_block(gr.top_block):
         self.analog_sig_source_x_0 = analog.sig_source_c(samp_rate, analog.GR_SIN_WAVE, -25000, 1, 0, 0)
         self.AISTX_Build_Frame_1 = AISTX.Build_Frame(payload, True, True)
         self.AISTX_Build_Frame_0 = AISTX.Build_Frame(payload, True, True)
-
 
         ##################################################
         # Connections
@@ -96,7 +95,6 @@ class top_block(gr.top_block):
         self.connect((self.blocks_selector_0, 0), (self.osmosdr_sink_0, 0))
         self.connect((self.digital_gmsk_mod_0, 0), (self.blocks_multiply_xx_0, 0))
         self.connect((self.digital_gmsk_mod_0_0, 0), (self.blocks_multiply_xx_0_0, 0))
-
 
     def get_samp_rate(self):
         return self.samp_rate
@@ -121,8 +119,6 @@ class top_block(gr.top_block):
         self.bit_rate = bit_rate
 
 
-
-
 if __name__ == '__main__':
     parser = OptionParser(usage="%prog: [options]")
     parser.add_option("-p", "--payload")
@@ -131,14 +127,15 @@ if __name__ == '__main__':
     if not options.payload:
         parser.error("Payload not specified")
 
-
     tb = top_block(payload=options.payload)
+
 
     def sig_handler(sig=None, frame=None):
         tb.stop()
         tb.wait()
 
         sys.exit(0)
+
 
     signal.signal(signal.SIGINT, sig_handler)
     signal.signal(signal.SIGTERM, sig_handler)

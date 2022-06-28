@@ -8,8 +8,8 @@
       "type": "object",
       "properties": {
         "shipID": {
-          "description": "ID of the ship to get",
-          "type": "string"
+          "description": "ID of the ship to get from db",
+          "type": "integer"
         }
       }
     },

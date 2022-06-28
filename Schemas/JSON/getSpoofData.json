@@ -9,7 +9,7 @@
       "properties": {
         "spoofID": {
           "description": "spoofID to get from the database",
-          "type": "string"
+          "type": "integer"
         }
       },
       "user": {
