@@ -20,9 +20,9 @@ For the data visualisation:
 
 
 
-parent of feaafe3... Revert "Merge branch 'main' of https://github.com/TheFlyingDutchmans/Project6.2"
+
 Schemas -> Hold the JSON and XML Schemas used to verify the request data  
-    JSON -> Has the JSON Schemas for all requests  
+    JSON -> Has the JSON Schemas for all requests   
     XML -> Has the XSD files for all requests  
 config -> The config files for secret key, db connection and API IP and port  
 scripts -> Tools and functions used by the API for JSON XML etc  
