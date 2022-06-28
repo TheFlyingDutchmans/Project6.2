@@ -19,10 +19,8 @@ For the data visualisation:
 3. Run `datavisualisation/dv.py`
 
 
-<<<<<<< HEAD
 
-=======
->>>>>>> parent of feaafe3... Revert "Merge branch 'main' of https://github.com/TheFlyingDutchmans/Project6.2"
+parent of feaafe3... Revert "Merge branch 'main' of https://github.com/TheFlyingDutchmans/Project6.2"
 Schemas -> Hold the JSON and XML Schemas used to verify the request data  
     JSON -> Has the JSON Schemas for all requests  
     XML -> Has the XSD files for all requests  
