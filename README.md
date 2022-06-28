@@ -8,7 +8,7 @@ remark: `theflyingdutchman.sql` file only adds the tables, not the database itse
 
 Run API: `API_3.py`
 
-remark: Endpoint SpoofShip will only work with the transmit-receive setup configured and running
+remark: Endpoint SpoofShip won't work without the transmit-receive setup configured and actively running
 
 
 
@@ -20,10 +20,9 @@ For the data visualisation:
 
 
 
-bb4bc94f2922ab34fb2af4691b0b3a622c3b1349
 Schemas -> Hold the JSON and XML Schemas used to verify the request data  
-JSON -> Has the JSON Schemas for all requests  
-XML -> Has the XSD files for all requests  
+    JSON -> Has the JSON Schemas for all requests  
+    XML -> Has the XSD files for all requests  
 config -> The config files for secret key, db connection and API IP and port  
 scripts -> Tools and functions used by the API for JSON XML etc  
 AIS_TX.py -> The Python code that runs GNURadio and accepts a binary payload  
