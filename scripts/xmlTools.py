@@ -1,3 +1,4 @@
+import os
 from io import StringIO
 from lxml import etree
 import xml.etree.ElementTree as ET
@@ -5,7 +6,8 @@ import scripts.tools as tools
 
 
 def validateXML(xmlDataInBytes, XSDData): # Validates XML against XSD
-    with open("Schemas/XML/" + XSDData + ".xsd", 'r') as xsd:
+    cd = os.path.abspath(os.path.join(os.path.dirname(os.path.abspath(__file__)), os.pardir))
+    with open(cd + "/Schemas/XML/" + XSDData + ".xsd", 'r') as xsd:
         xmlschema_doc = etree.parse(xsd)
     xmlschema = etree.XMLSchema(xmlschema_doc)
 

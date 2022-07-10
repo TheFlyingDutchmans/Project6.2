@@ -1,14 +1,18 @@
 import configparser
+import os
 import mysql.connector
 from flask import jsonify
 
 
+cd = os.path.abspath(os.path.join(os.path.dirname(os.path.abspath(__file__)), os.pardir))
+
+
 def connectToDB(): # Connect to the database
     dbConfig = configparser.ConfigParser() # Read the config file
-    dbConfig.read('config/dbConn.ini')
+    dbConfig.read(cd + '/config/dbConn.ini')
 
     if not dbConfig.sections(): # If the config file is empty
-        print("Config file missing")
+        print('Missing or empty config file for dbTools')
         exit()
 
     try:
